@@ -18,7 +18,7 @@ ORDER BY [MonthNumber]
 SET @columns = LEFT(@columns, LEN(@columns) - 1);
 
 SET @sql = '
-		WITH ProductsByCategoryCTE AS (
+		WITH cte_pricePerYearMonth AS (
 			SELECT CAST(DATENAME(Month, o.OrderDate) AS CHAR(3)) AS Month,
 				ISNULL(oi.ListPrice, 0.00) AS ListPrice,
 				DATENAME(Year, o.OrderDate) AS SalesYear
@@ -26,7 +26,7 @@ SET @sql = '
 			INNER JOIN dbo.OrderItem oi ON oi.OrderID = o.OrderID 	
 		)
 
-		SELECT * FROM ProductsByCategoryCTE 
+		SELECT * FROM cte_pricePerYearMonth 
 		PIVOT(
 			SUM(ListPrice)
 			FOR Month IN ('+ @columns +')
